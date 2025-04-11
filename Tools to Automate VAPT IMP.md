@@ -1,4 +1,4 @@
-# Tools and their Usage for Automated VAPT
+# Tools and their Usage for Automated VAPT "Sn1per Excluded"
 ---
 
 ```markdown
