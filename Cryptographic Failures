@@ -1,0 +1,56 @@
+# OWASP Payload Guide
+
+This document provides payload examples, detection techniques, and exploitation commands for common OWASP Top 10 vulnerabilities. Each section contains a brief description, how to identify the vulnerability, and example payloads (primarily using `curl` or similar command-line tools).
+
+---
+
+## ✅ 1. Cryptographic Failures
+### How to Identify:
+- Weak or no encryption in transit (e.g., HTTP instead of HTTPS).
+- Hardcoded secrets or keys in source code.
+- Reuse of nonces, IVs, or predictable keys.
+- Lack of password hashing, or use of weak algorithms (e.g., MD5, SHA1).
+- Exposure of sensitive data in logs, URLs, or client-side code.
+
+### How to Exploit:
+
+#### 1. **Discovering Sensitive Data in Transit (Unencrypted)**
+```
+curl -I http://example.com/login
+```
+If the response is not redirected to HTTPS or sensitive data (like tokens) is being sent over plain HTTP, it's vulnerable.
+
+#### 2. **Checking for Weak JWT Secrets**
+Use [`jwt_tool`](https://github.com/ticarpi/jwt_tool) or `jwt-cracker`:
+```
+python3 jwt_tool.py eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9... -C -d wordlist.txt
+```
+
+#### 3. **Detecting Insecure Password Hashing (MD5 / SHA1)**
+Intercept a registration/login request and analyze the hash value:
+```
+echo -n "password" | md5sum
+```
+If the hash matches, they're using unsalted MD5.
+
+#### 4. **Hardcoded Keys in JS Files**
+```
+curl https://example.com/static/js/main.js | grep -i 'secret\|key\|token'
+```
+Look for sensitive information exposed in frontend source code.
+
+#### 5. **Testing Reused IV or Plaintext Output**
+If ciphertexts repeat or show patterns, reuse of IV/non-random generation is suspected.
+Use tools like `CyberChef` or scripts to visualize patterns.
+
+### Mitigation Checklist:
+- Always use HTTPS.
+- Use strong cryptographic algorithms (e.g., AES-GCM, bcrypt, PBKDF2).
+- Never hardcode keys/secrets in client-side code.
+- Use proper randomization for IVs, salts, tokens.
+- Do not log sensitive information.
+
+---
+
+Let me know which category you'd like to cover next: Broken Access Control, Injection, Insecure Design, etc.
+
