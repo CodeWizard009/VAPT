@@ -1,0 +1,5 @@
+SQLMap Theory & cmds:
+
+cmds:
+1. sqlmap -u url --random-agent 
+2. sqlmap -u url --randomagent --dump
