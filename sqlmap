@@ -1,4 +1,5 @@
 SQLMap Theory & cmds:
+https://mahim-firoj.medium.com/sqlmap-cheat-sheet-15fe7fff2e8c
 To identify whether sql vuln is present on website just add ' after the link of the website. If the response is an ERROR msg of SQL syntax & Warning msg then that meas vuln exist.
 
 Features: 
